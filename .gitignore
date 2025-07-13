@@ -1,63 +1,41 @@
-# Node modules
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
 node_modules/
 
 # Expo
 .expo/
-.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
 
-# Build output
-/dist/
-/build/
-/web-build/
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
 
-# System files
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
 .DS_Store
-Thumbs.db
+*.pem
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE/editor folders
-.vscode/
-.idea/
-
-# OS generated files
-*.swp
-
-# Environment files
+# local env files
+.env*.local
 .env
-.env.*
 
-# Misc
-*.log
-*.tmp
-
-# Expo generated assets
-assets/*.db
-
-# TypeScript
+# typescript
 *.tsbuildinfo
 
-# Mac
-Icon?
-
-# Android
-android/
-
-# iOS
-ios/
-
-# Backup files
-*.bak
-
-# Test coverage
-coverage/
-
-# Expo web service worker
-service-worker.js
-
-# Ignore backup and export files
-*.json.backup
-habit-streak-backup-*.json
+app-example
+android
+ios

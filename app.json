@@ -16,14 +16,17 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.totorobit.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.totorobit.app"
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "extra": {
+      "eas": {
+        "projectId": "6185d96e-dec7-4010-8e72-c52aa04ab128"
+      }
     }
   }
 }
