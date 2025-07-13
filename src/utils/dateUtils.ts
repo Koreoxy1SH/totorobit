@@ -5,11 +5,11 @@ export const formatDate = (date: Date): string => {
 export const getToday = (): string => {
   // For testing: you can modify this to simulate different dates
   // Comment out the line below and uncomment one of the test dates
-  // return formatDate(new Date());
+  return formatDate(new Date());
 
   // Test dates - uncomment one of these to simulate different days:
   // return "2025-07-13"; // Day 1
-  return "2025-07-14"; // Day 2
+  // return "2025-07-14"; // Day 2
   // return "2025-07-15"; // Day 3
   // return '2024-01-05'; // Day 5 (skip day 4 to test streak break)
   // return '2024-01-10'; // Day 10

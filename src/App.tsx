@@ -172,7 +172,7 @@ const HabitStreakApp: React.FC = () => {
               </View>
             </View>
 
-            <TestDateDisplay />
+            {/* <TestDateDisplay /> */}
 
             {habits.length === 0 ? (
               <EmptyState />
@@ -204,7 +204,21 @@ const HabitStreakApp: React.FC = () => {
       case "stats":
         return <StatsScreen habits={habits} />;
       case "settings":
-        return <SettingsScreen onClearData={handleClearAllData} />;
+        return (
+          <SettingsScreen
+            onClearData={handleClearAllData}
+            habits={habits}
+            onImportData={async (importedHabits) => {
+              try {
+                // Save imported habits to storage
+                await saveHabits(importedHabits);
+                setHabits(importedHabits);
+              } catch (error) {
+                console.error("Error saving imported data:", error);
+              }
+            }}
+          />
+        );
       default:
         return null;
     }

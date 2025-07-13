@@ -6,16 +6,78 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { exportHabitsData, importHabitsData } from "../utils/fileUtils";
+import { Habit } from "../types";
 
 interface SettingsScreenProps {
   onClearData: () => void;
+  habits: Habit[];
+  onImportData: (habits: Habit[]) => void;
 }
 
-const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClearData }) => {
+const SettingsScreen: React.FC<SettingsScreenProps> = ({
+  onClearData,
+  habits,
+  onImportData,
+}) => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
+
+  const handleExportData = async () => {
+    try {
+      if (habits.length === 0) {
+        Alert.alert("No Data", "There are no habits to export.");
+        return;
+      }
+
+      await exportHabitsData(habits);
+      Alert.alert("Success", "Habit data exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      Alert.alert("Error", "Failed to export data. Please try again.");
+    }
+  };
+
+  const handleImportData = async () => {
+    try {
+      Alert.alert(
+        "Import Data",
+        "This will replace your current habits. Are you sure?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Import",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                const importedHabits = await importHabitsData();
+                onImportData(importedHabits);
+                Alert.alert("Success", "Habit data imported successfully!");
+              } catch (error) {
+                console.error("Import error:", error);
+                if (
+                  error instanceof Error &&
+                  error.message === "Import cancelled"
+                ) {
+                  return;
+                }
+                Alert.alert(
+                  "Error",
+                  "Failed to import data. Please check the file format."
+                );
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Import error:", error);
+      Alert.alert("Error", "Failed to import data. Please try again.");
+    }
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -81,12 +143,31 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClearData }) => {
           <Ionicons name="chevron-forward" size={20} color="#666" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity style={styles.settingItem} onPress={handleExportData}>
           <View style={styles.settingInfo}>
-            <Ionicons name="download" size={24} color="#666" />
+            <Ionicons name="download" size={24} color="#4CAF50" />
             <View style={styles.settingText}>
-              <Text style={styles.settingLabel}>Export Data</Text>
-              <Text style={styles.settingDescription}>Backup your habits</Text>
+              <Text style={[styles.settingLabel, { color: "#4CAF50" }]}>
+                Export Data
+              </Text>
+              <Text style={styles.settingDescription}>
+                Backup your habits to JSON file
+              </Text>
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#666" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem} onPress={handleImportData}>
+          <View style={styles.settingInfo}>
+            <Ionicons name="cloud-upload" size={24} color="#FF9800" />
+            <View style={styles.settingText}>
+              <Text style={[styles.settingLabel, { color: "#FF9800" }]}>
+                Import Data
+              </Text>
+              <Text style={styles.settingDescription}>
+                Restore habits from backup file
+              </Text>
             </View>
           </View>
           <Ionicons name="chevron-forward" size={20} color="#666" />
