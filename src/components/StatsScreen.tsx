@@ -1,12 +1,15 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Habit } from "../types";
+import { useTheme } from "../context/ThemeContext";
 
 interface StatsScreenProps {
   habits: Habit[];
 }
 
 const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
+  const { colors } = useTheme();
+
   const totalHabits = habits.length;
   const completedToday = habits.filter((habit) =>
     habit.completedDates.includes(
@@ -23,43 +26,105 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Statistics</Text>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <Text style={[styles.title, { color: colors.primaryText }]}>
+          Statistics
+        </Text>
       </View>
 
       <View style={styles.statsGrid}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{totalHabits}</Text>
-          <Text style={styles.statLabel}>Total Habits</Text>
+        <View
+          style={[
+            styles.statCard,
+            { backgroundColor: colors.card, shadowColor: colors.shadow },
+          ]}
+        >
+          <Text style={[styles.statNumber, { color: colors.success }]}>
+            {totalHabits}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
+            Total Habits
+          </Text>
         </View>
 
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{completedToday}</Text>
-          <Text style={styles.statLabel}>Completed Today</Text>
+        <View
+          style={[
+            styles.statCard,
+            { backgroundColor: colors.card, shadowColor: colors.shadow },
+          ]}
+        >
+          <Text style={[styles.statNumber, { color: colors.success }]}>
+            {completedToday}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
+            Completed Today
+          </Text>
         </View>
 
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{totalStreak}</Text>
-          <Text style={styles.statLabel}>Total Streak</Text>
+        <View
+          style={[
+            styles.statCard,
+            { backgroundColor: colors.card, shadowColor: colors.shadow },
+          ]}
+        >
+          <Text style={[styles.statNumber, { color: colors.success }]}>
+            {totalStreak}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
+            Total Streak
+          </Text>
         </View>
 
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{longestStreak}</Text>
-          <Text style={styles.statLabel}>Longest Streak</Text>
+        <View
+          style={[
+            styles.statCard,
+            { backgroundColor: colors.card, shadowColor: colors.shadow },
+          ]}
+        >
+          <Text style={[styles.statNumber, { color: colors.success }]}>
+            {longestStreak}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
+            Longest Streak
+          </Text>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Habit Overview</Text>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.card, shadowColor: colors.shadow },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
+          Habit Overview
+        </Text>
         {habits.map((habit) => (
-          <View key={habit.id} style={styles.habitStat}>
-            <Text style={styles.habitName}>{habit.name}</Text>
+          <View
+            key={habit.id}
+            style={[styles.habitStat, { borderBottomColor: colors.divider }]}
+          >
+            <Text style={[styles.habitName, { color: colors.primaryText }]}>
+              {habit.name}
+            </Text>
             <View style={styles.habitStats}>
-              <Text style={styles.habitStatText}>
+              <Text
+                style={[styles.habitStatText, { color: colors.secondaryText }]}
+              >
                 Current: {habit.currentStreak} days
               </Text>
-              <Text style={styles.habitStatText}>
+              <Text
+                style={[styles.habitStatText, { color: colors.secondaryText }]}
+              >
                 Longest: {habit.longestStreak} days
               </Text>
             </View>
@@ -73,19 +138,15 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   header: {
-    backgroundColor: "white",
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
   },
   statsGrid: {
     flexDirection: "row",
@@ -94,13 +155,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   statCard: {
-    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     flex: 1,
     minWidth: "45%",
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -112,20 +171,16 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#4CAF50",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: "#666",
     textAlign: "center",
   },
   section: {
-    backgroundColor: "white",
     margin: 16,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -137,18 +192,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 12,
   },
   habitStat: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
   },
   habitName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 4,
   },
   habitStats: {
@@ -157,7 +209,6 @@ const styles = StyleSheet.create({
   },
   habitStatText: {
     fontSize: 14,
-    color: "#666",
   },
 });
 

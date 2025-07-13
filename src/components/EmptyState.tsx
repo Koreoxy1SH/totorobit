@@ -1,13 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../context/ThemeContext";
 
 const EmptyState: React.FC = () => {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Ionicons name="fitness-outline" size={64} color="#CCC" />
-      <Text style={styles.title}>No Habits Yet</Text>
-      <Text style={styles.subtitle}>
+      <Ionicons name="fitness-outline" size={64} color={colors.secondaryText} />
+      <Text style={[styles.title, { color: colors.primaryText }]}>
+        No Habits Yet
+      </Text>
+      <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
         Start building your daily habits by adding your first habit!
       </Text>
     </View>
@@ -24,13 +29,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#333",
     marginTop: 16,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
     textAlign: "center",
     lineHeight: 24,
   },

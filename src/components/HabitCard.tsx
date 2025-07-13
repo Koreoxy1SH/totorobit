@@ -5,6 +5,7 @@ import { Habit } from "../types";
 import { isToday, getStreakEmoji, getToday } from "../utils/dateUtils";
 import StreakCalendar from "./StreakCalendar";
 import StreakStatus from "./StreakStatus";
+import { useTheme } from "../context/ThemeContext";
 
 interface HabitCardProps {
   habit: Habit;
@@ -17,6 +18,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
   onToggleComplete,
   onDelete,
 }) => {
+  const { colors, isDarkMode } = useTheme();
   const isCompletedToday = habit.completedDates.includes(getToday());
 
   const handleToggle = () => {
@@ -39,7 +41,20 @@ const HabitCard: React.FC<HabitCardProps> = ({
   };
 
   return (
-    <View style={[styles.card, isCompletedToday && styles.completedCard]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: colors.card, shadowColor: colors.shadow },
+        isCompletedToday && [
+          styles.completedCard,
+          {
+            backgroundColor: isDarkMode ? "#1A3A1A" : "#E8F5E8",
+            borderColor: colors.success,
+            shadowColor: colors.success,
+          },
+        ],
+      ]}
+    >
       <TouchableOpacity
         style={styles.content}
         onPress={handleToggle}
@@ -47,7 +62,14 @@ const HabitCard: React.FC<HabitCardProps> = ({
       >
         <View style={styles.habitInfo}>
           <Text
-            style={[styles.habitName, isCompletedToday && styles.completedText]}
+            style={[
+              styles.habitName,
+              { color: colors.primaryText },
+              isCompletedToday && [
+                styles.completedText,
+                { color: colors.success },
+              ],
+            ]}
           >
             {habit.name}
           </Text>
@@ -57,7 +79,14 @@ const HabitCard: React.FC<HabitCardProps> = ({
           <View
             style={[
               styles.checkCircle,
-              isCompletedToday && styles.checkedCircle,
+              { borderColor: colors.border },
+              isCompletedToday && [
+                styles.checkedCircle,
+                {
+                  backgroundColor: colors.primary,
+                  borderColor: colors.primary,
+                },
+              ],
             ]}
           >
             {isCompletedToday && (
@@ -70,7 +99,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
             onPress={handleDelete}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="trash-outline" size={20} color="#FF6B6B" />
+            <Ionicons name="trash-outline" size={20} color={colors.error} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -86,12 +115,10 @@ const HabitCard: React.FC<HabitCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     marginVertical: 6,
     marginHorizontal: 16,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -101,10 +128,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   completedCard: {
-    backgroundColor: "#E8F5E8",
-    borderColor: "#4CAF50",
     borderWidth: 2,
-    shadowColor: "#4CAF50",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -124,11 +148,9 @@ const styles = StyleSheet.create({
   habitName: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 4,
   },
   completedText: {
-    color: "#2E7D32",
     textDecorationLine: "line-through",
   },
   streakContainer: {
@@ -141,7 +163,6 @@ const styles = StyleSheet.create({
   },
   streakText: {
     fontSize: 14,
-    color: "#666",
     fontWeight: "500",
   },
   actions: {
@@ -153,14 +174,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#DDD",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
   checkedCircle: {
-    backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
+    // Styling applied dynamically
   },
   deleteButton: {
     padding: 8,

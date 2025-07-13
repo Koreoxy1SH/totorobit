@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import HabitCard from "./components/HabitCard";
@@ -25,12 +26,14 @@ import {
   deleteHabit,
   saveHabits,
 } from "./utils/storage";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
-const HabitStreakApp: React.FC = () => {
+const HabitStreakAppContent: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("habits");
+  const { colors, statusBarStyle, statusBarBackgroundColor } = useTheme();
 
   useEffect(() => {
     loadHabitsFromStorage();
@@ -144,9 +147,17 @@ const HabitStreakApp: React.FC = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <StatusBar
+          barStyle={statusBarStyle}
+          backgroundColor={statusBarBackgroundColor}
+        />
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading...</Text>
+          <Text style={[styles.loadingText, { color: colors.secondaryText }]}>
+            Loading...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -157,16 +168,28 @@ const HabitStreakApp: React.FC = () => {
       case "habits":
         return (
           <>
-            <View style={styles.header}>
+            <View
+              style={[
+                styles.header,
+                {
+                  backgroundColor: colors.surface,
+                  borderBottomColor: colors.border,
+                },
+              ]}
+            >
               <View>
-                <Text style={styles.title}>Habit Streak</Text>
-                <Text style={styles.subtitle}>
+                <Text style={[styles.title, { color: colors.primaryText }]}>
+                  Habit Streak
+                </Text>
+                <Text
+                  style={[styles.subtitle, { color: colors.secondaryText }]}
+                >
                   {getCompletedToday()} of {habits.length} habits completed
                   today
                 </Text>
               </View>
               <View style={styles.statsContainer}>
-                <Text style={styles.statsText}>
+                <Text style={[styles.statsText, { color: colors.success }]}>
                   🔥 {getTotalStreak()} total streak
                 </Text>
               </View>
@@ -193,7 +216,7 @@ const HabitStreakApp: React.FC = () => {
             )}
 
             <TouchableOpacity
-              style={styles.fab}
+              style={[styles.fab, { backgroundColor: colors.primary }]}
               onPress={() => setModalVisible(true)}
               activeOpacity={0.8}
             >
@@ -225,7 +248,13 @@ const HabitStreakApp: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <StatusBar
+        barStyle={statusBarStyle}
+        backgroundColor={statusBarBackgroundColor}
+      />
       <View style={styles.content}>{renderContent()}</View>
 
       <BottomTabBar activeTab={activeTab} onTabPress={setActiveTab} />
@@ -239,10 +268,17 @@ const HabitStreakApp: React.FC = () => {
   );
 };
 
+const HabitStreakApp: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <HabitStreakAppContent />
+    </ThemeProvider>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   content: {
     flex: 1,
@@ -254,24 +290,20 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: "#666",
   },
   header: {
-    backgroundColor: "white",
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 20,
+    paddingTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
   },
   statsContainer: {
     marginTop: 8,
@@ -279,19 +311,18 @@ const styles = StyleSheet.create({
   statsText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#4CAF50",
   },
   listContainer: {
     paddingVertical: 8,
+    paddingBottom: 16,
   },
   fab: {
     position: "absolute",
-    bottom: 100, // Adjusted for bottom tab bar
+    bottom: 120,
     right: 24,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#4CAF50",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",

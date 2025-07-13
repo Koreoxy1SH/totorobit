@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { HabitFormData } from "../types";
+import { useTheme } from "../context/ThemeContext";
 
 interface AddHabitModalProps {
   visible: boolean;
@@ -22,6 +23,7 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
   onClose,
   onAddHabit,
 }) => {
+  const { colors } = useTheme();
   const [habitName, setHabitName] = useState("");
 
   const handleAddHabit = () => {
@@ -49,23 +51,39 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
       transparent={true}
       onRequestClose={handleCancel}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
+      <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
+        <View
+          style={[
+            styles.modal,
+            { backgroundColor: colors.surface, shadowColor: colors.shadow },
+          ]}
+        >
           <View style={styles.header}>
-            <Text style={styles.title}>Add New Habit</Text>
+            <Text style={[styles.title, { color: colors.primaryText }]}>
+              Add New Habit
+            </Text>
             <TouchableOpacity onPress={handleCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={24} color={colors.secondaryText} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.label}>Habit Name</Text>
+            <Text style={[styles.label, { color: colors.primaryText }]}>
+              Habit Name
+            </Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: colors.border,
+                  backgroundColor: colors.background,
+                  color: colors.primaryText,
+                },
+              ]}
               value={habitName}
               onChangeText={setHabitName}
               placeholder="e.g., Drink Water, Exercise, Read"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.secondaryText}
               autoFocus={true}
               returnKeyType="done"
               onSubmitEditing={handleAddHabit}
@@ -73,14 +91,32 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
 
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={[styles.button, styles.cancelButton]}
+                style={[
+                  styles.button,
+                  styles.cancelButton,
+                  {
+                    backgroundColor: colors.background,
+                    borderColor: colors.border,
+                  },
+                ]}
                 onPress={handleCancel}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text
+                  style={[
+                    styles.cancelButtonText,
+                    { color: colors.secondaryText },
+                  ]}
+                >
+                  Cancel
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.button, styles.addButton]}
+                style={[
+                  styles.button,
+                  styles.addButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 onPress={handleAddHabit}
               >
                 <Text style={styles.addButtonText}>Add Habit</Text>
@@ -96,17 +132,14 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   modal: {
-    backgroundColor: "white",
     borderRadius: 16,
     padding: 20,
     width: "85%",
     maxWidth: 400,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -124,7 +157,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#333",
   },
   closeButton: {
     padding: 4,
@@ -135,17 +167,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#333",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#DDD",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     marginBottom: 24,
-    backgroundColor: "#F9F9F9",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -159,17 +188,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#F5F5F5",
     borderWidth: 1,
-    borderColor: "#DDD",
   },
   cancelButtonText: {
-    color: "#666",
     fontSize: 16,
     fontWeight: "500",
   },
   addButton: {
-    backgroundColor: "#4CAF50",
+    // Background color applied dynamically
   },
   addButtonText: {
     color: "white",

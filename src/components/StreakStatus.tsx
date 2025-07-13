@@ -2,12 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Habit } from "../types";
 import { getStreakEmoji } from "../utils/dateUtils";
+import { useTheme } from "../context/ThemeContext";
 
 interface StreakStatusProps {
   habit: Habit;
 }
 
 const StreakStatus: React.FC<StreakStatusProps> = ({ habit }) => {
+  const { colors, isDarkMode } = useTheme();
   const isCompletedToday = habit.completedDates.includes(
     habit.completedDates[habit.completedDates.length - 1] || ""
   );
@@ -19,16 +21,18 @@ const StreakStatus: React.FC<StreakStatusProps> = ({ habit }) => {
           {getStreakEmoji(habit.currentStreak)}
         </Text>
         <View style={styles.streakTextContainer}>
-          <Text style={styles.streakCount}>
+          <Text style={[styles.streakCount, { color: colors.primaryText }]}>
             {habit.currentStreak} day{habit.currentStreak !== 1 ? "s" : ""}
           </Text>
-          <Text style={styles.streakLabel}>current streak</Text>
+          <Text style={[styles.streakLabel, { color: colors.secondaryText }]}>
+            current streak
+          </Text>
         </View>
       </View>
 
       {habit.longestStreak > habit.currentStreak && (
         <View style={styles.longestStreak}>
-          <Text style={styles.longestLabel}>
+          <Text style={[styles.longestLabel, { color: colors.secondaryText }]}>
             Longest: {habit.longestStreak} days
           </Text>
         </View>
@@ -37,13 +41,24 @@ const StreakStatus: React.FC<StreakStatusProps> = ({ habit }) => {
       <View
         style={[
           styles.statusIndicator,
-          isCompletedToday && styles.completedStatus,
+          { backgroundColor: colors.background, borderColor: colors.border },
+          isCompletedToday && [
+            styles.completedStatus,
+            {
+              backgroundColor: isDarkMode ? "#1A3A1A" : "#E8F5E8",
+              borderColor: colors.success,
+            },
+          ],
         ]}
       >
         <Text
           style={[
             styles.statusText,
-            isCompletedToday && styles.completedStatusText,
+            { color: colors.secondaryText },
+            isCompletedToday && [
+              styles.completedStatusText,
+              { color: colors.success },
+            ],
           ]}
         >
           {isCompletedToday ? "Completed Today" : "Not Completed Today"}
@@ -73,11 +88,9 @@ const styles = StyleSheet.create({
   streakCount: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
   },
   streakLabel: {
     fontSize: 12,
-    color: "#666",
     marginTop: 2,
   },
   longestStreak: {
@@ -85,29 +98,24 @@ const styles = StyleSheet.create({
   },
   longestLabel: {
     fontSize: 12,
-    color: "#666",
     fontStyle: "italic",
   },
   statusIndicator: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: "#F5F5F5",
     borderWidth: 1,
-    borderColor: "#DDD",
   },
   completedStatus: {
-    backgroundColor: "#E8F5E8",
-    borderColor: "#4CAF50",
+    // Styling applied dynamically
   },
   statusText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#666",
     textAlign: "center",
   },
   completedStatusText: {
-    color: "#2E7D32",
+    // Color applied dynamically
   },
 });
 

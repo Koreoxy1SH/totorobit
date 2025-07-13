@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Habit } from "../types";
 import { getToday, formatDate } from "../utils/dateUtils";
+import { useTheme } from "../context/ThemeContext";
 
 interface StreakCalendarProps {
   habit: Habit;
@@ -12,6 +13,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
   habit,
   onDayPress,
 }) => {
+  const { colors } = useTheme();
   const today = getToday();
   const currentDate = new Date();
 
@@ -39,32 +41,54 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
 
   const getDayStyle = (date: string) => {
     if (isCompleted(date)) {
-      return [styles.day, styles.completedDay];
+      return [
+        styles.day,
+        styles.completedDay,
+        { backgroundColor: colors.success },
+      ];
     } else if (isToday(date)) {
-      return [styles.day, styles.today];
+      return [
+        styles.day,
+        styles.today,
+        { backgroundColor: colors.warning, borderColor: colors.warning },
+      ];
     } else {
-      return [styles.day, styles.emptyDay];
+      return [
+        styles.day,
+        styles.emptyDay,
+        { backgroundColor: colors.background },
+      ];
     }
   };
 
   const getDayTextStyle = (date: string) => {
     if (isCompleted(date)) {
-      return styles.completedDayText;
+      return [styles.completedDayText, { color: "white" }];
     } else if (isToday(date)) {
-      return styles.todayText;
+      return [styles.todayText, { color: "white" }];
     } else {
-      return styles.emptyDayText;
+      return [styles.emptyDayText, { color: colors.secondaryText }];
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Last 7 Days</Text>
-      <View style={styles.calendar}>
+      <Text style={[styles.title, { color: colors.primaryText }]}>
+        Last 7 Days
+      </Text>
+      <View
+        style={[
+          styles.calendar,
+          { backgroundColor: colors.card, shadowColor: colors.shadow },
+        ]}
+      >
         {/* Day names */}
         <View style={styles.dayNamesRow}>
           {dayNames.map((dayName, index) => (
-            <Text key={index} style={styles.dayName}>
+            <Text
+              key={index}
+              style={[styles.dayName, { color: colors.secondaryText }]}
+            >
               {dayName}
             </Text>
           ))}
@@ -83,7 +107,12 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({
               >
                 <Text style={getDayTextStyle(date)}>{dayNumber}</Text>
                 {isCompleted(date) && (
-                  <View style={styles.checkmark}>
+                  <View
+                    style={[
+                      styles.checkmark,
+                      { backgroundColor: colors.primaryDark },
+                    ]}
+                  >
                     <Text style={styles.checkmarkText}>✓</Text>
                   </View>
                 )}
@@ -104,14 +133,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 8,
   },
   calendar: {
-    backgroundColor: "white",
     borderRadius: 8,
     padding: 12,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -128,7 +154,6 @@ const styles = StyleSheet.create({
   dayName: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#666",
     width: 32,
     textAlign: "center",
   },
@@ -145,36 +170,34 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   completedDay: {
-    backgroundColor: "#4CAF50",
+    // Background color applied dynamically
   },
   today: {
-    backgroundColor: "#FF9800",
     borderWidth: 2,
-    borderColor: "#F57C00",
+    // Background and border colors applied dynamically
   },
   emptyDay: {
-    backgroundColor: "#F5F5F5",
+    // Background color applied dynamically
   },
   completedDayText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "white",
+    // Color applied dynamically
   },
   todayText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "white",
+    // Color applied dynamically
   },
   emptyDayText: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#999",
+    // Color applied dynamically
   },
   checkmark: {
     position: "absolute",
     top: -2,
     right: -2,
-    backgroundColor: "#2E7D32",
     borderRadius: 8,
     width: 16,
     height: 16,

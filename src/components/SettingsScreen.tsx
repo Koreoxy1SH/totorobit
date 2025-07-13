@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { exportHabitsData, importHabitsData } from "../utils/fileUtils";
 import { Habit } from "../types";
+import { useTheme } from "../context/ThemeContext";
 
 interface SettingsScreenProps {
   onClearData: () => void;
@@ -23,8 +24,8 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   habits,
   onImportData,
 }) => {
+  const { colors, isDarkMode, toggleDarkMode } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
 
   const handleExportData = async () => {
     try {
@@ -80,20 +81,52 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
+        ]}
+      >
+        <Text style={[styles.title, { color: colors.primaryText }]}>
+          Settings
+        </Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.surface, shadowColor: colors.shadow },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
+          Preferences
+        </Text>
 
-        <View style={styles.settingItem}>
+        <View
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="notifications" size={24} color="#666" />
+            <Ionicons
+              name="notifications"
+              size={24}
+              color={colors.secondaryText}
+            />
             <View style={styles.settingText}>
-              <Text style={styles.settingLabel}>Notifications</Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[styles.settingLabel, { color: colors.primaryText }]}
+              >
+                Notifications
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Daily reminders for habits
               </Text>
             </View>
@@ -101,103 +134,202 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <Switch
             value={notificationsEnabled}
             onValueChange={setNotificationsEnabled}
-            trackColor={{ false: "#E0E0E0", true: "#4CAF50" }}
-            thumbColor={notificationsEnabled ? "#2E7D32" : "#F5F5F5"}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={
+              notificationsEnabled ? colors.primaryDark : colors.surface
+            }
           />
         </View>
 
-        <View style={styles.settingItem}>
+        <View
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="moon" size={24} color="#666" />
+            <Ionicons name="moon" size={24} color={colors.secondaryText} />
             <View style={styles.settingText}>
-              <Text style={styles.settingLabel}>Dark Mode</Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[styles.settingLabel, { color: colors.primaryText }]}
+              >
+                Dark Mode
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Switch to dark theme
               </Text>
             </View>
           </View>
           <Switch
-            value={darkModeEnabled}
-            onValueChange={setDarkModeEnabled}
-            trackColor={{ false: "#E0E0E0", true: "#4CAF50" }}
-            thumbColor={darkModeEnabled ? "#2E7D32" : "#F5F5F5"}
+            value={isDarkMode}
+            onValueChange={toggleDarkMode}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={isDarkMode ? colors.primaryDark : colors.surface}
           />
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data Management</Text>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.surface, shadowColor: colors.shadow },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
+          Data Management
+        </Text>
 
-        <TouchableOpacity style={styles.settingItem} onPress={onClearData}>
+        <TouchableOpacity
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+          onPress={onClearData}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="trash" size={24} color="#FF6B6B" />
+            <Ionicons name="trash" size={24} color={colors.error} />
             <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: "#FF6B6B" }]}>
+              <Text style={[styles.settingLabel, { color: colors.error }]}>
                 Clear All Data
               </Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Delete all habits and progress
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.secondaryText}
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem} onPress={handleExportData}>
+        <TouchableOpacity
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+          onPress={handleExportData}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="download" size={24} color="#4CAF50" />
+            <Ionicons name="download" size={24} color={colors.success} />
             <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: "#4CAF50" }]}>
+              <Text style={[styles.settingLabel, { color: colors.success }]}>
                 Export Data
               </Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Backup your habits to JSON file
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.secondaryText}
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem} onPress={handleImportData}>
+        <TouchableOpacity
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+          onPress={handleImportData}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="cloud-upload" size={24} color="#FF9800" />
+            <Ionicons name="cloud-upload" size={24} color={colors.warning} />
             <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: "#FF9800" }]}>
+              <Text style={[styles.settingLabel, { color: colors.warning }]}>
                 Import Data
               </Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Restore habits from backup file
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.secondaryText}
+          />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.surface, shadowColor: colors.shadow },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
+          About
+        </Text>
 
-        <View style={styles.settingItem}>
+        <View
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="information-circle" size={24} color="#666" />
+            <Ionicons
+              name="information-circle"
+              size={24}
+              color={colors.secondaryText}
+            />
             <View style={styles.settingText}>
-              <Text style={styles.settingLabel}>Version</Text>
-              <Text style={styles.settingDescription}>1.0.0</Text>
+              <Text
+                style={[styles.settingLabel, { color: colors.primaryText }]}
+              >
+                Version
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
+                1.0.0
+              </Text>
             </View>
           </View>
         </View>
 
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity
+          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+        >
           <View style={styles.settingInfo}>
-            <Ionicons name="help-circle" size={24} color="#666" />
+            <Ionicons
+              name="help-circle"
+              size={24}
+              color={colors.secondaryText}
+            />
             <View style={styles.settingText}>
-              <Text style={styles.settingLabel}>Help & Support</Text>
-              <Text style={styles.settingDescription}>
+              <Text
+                style={[styles.settingLabel, { color: colors.primaryText }]}
+              >
+                Help & Support
+              </Text>
+              <Text
+                style={[
+                  styles.settingDescription,
+                  { color: colors.secondaryText },
+                ]}
+              >
                 Get help with the app
               </Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.secondaryText}
+          />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -207,26 +339,20 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   header: {
-    backgroundColor: "white",
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
   },
   section: {
-    backgroundColor: "white",
     margin: 16,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -238,16 +364,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
   },
   settingInfo: {
     flexDirection: "row",
@@ -260,13 +384,11 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
+    fontWeight: "600",
+    marginBottom: 2,
   },
   settingDescription: {
     fontSize: 14,
-    color: "#666",
-    marginTop: 2,
   },
 });
 

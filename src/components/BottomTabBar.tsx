@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../context/ThemeContext";
 
 interface BottomTabBarProps {
   activeTab: string;
@@ -11,6 +12,8 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
   activeTab,
   onTabPress,
 }) => {
+  const { colors } = useTheme();
+
   const tabs = [
     { id: "habits", label: "Habits", icon: "list" },
     { id: "stats", label: "Stats", icon: "stats-chart" },
@@ -18,7 +21,12 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
   ];
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.surface, borderTopColor: colors.border },
+      ]}
+    >
       {tabs.map((tab) => (
         <TouchableOpacity
           key={tab.id}
@@ -28,11 +36,15 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
           <Ionicons
             name={tab.icon as any}
             size={24}
-            color={activeTab === tab.id ? "#4CAF50" : "#666"}
+            color={activeTab === tab.id ? colors.primary : colors.secondaryText}
           />
           <Text
             style={[
               styles.tabLabel,
+              {
+                color:
+                  activeTab === tab.id ? colors.primary : colors.secondaryText,
+              },
               activeTab === tab.id && styles.activeTabLabel,
             ]}
           >
@@ -47,29 +59,26 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "white",
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
-    paddingBottom: 20, // Extra padding for safe area
-    paddingTop: 8,
+    paddingBottom: 1,
+    paddingTop: 1,
+    paddingHorizontal: 8,
   },
   tab: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   activeTab: {
     // Active tab styling
   },
   tabLabel: {
     fontSize: 12,
-    color: "#666",
-    marginTop: 4,
+    marginTop: 6,
     fontWeight: "500",
   },
   activeTabLabel: {
-    color: "#4CAF50",
     fontWeight: "600",
   },
 });
