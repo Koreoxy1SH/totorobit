@@ -33,7 +33,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         Alert.alert("No Data", "There are no habits to export.");
         return;
       }
-
       await exportHabitsData(habits);
       Alert.alert("Success", "Habit data exported successfully!");
     } catch (error) {
@@ -91,45 +90,47 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ]}
       >
+        <Ionicons
+          name="settings"
+          size={28}
+          color={colors.accentText}
+          style={{ marginRight: 10 }}
+        />
         <Text style={[styles.title, { color: colors.primaryText }]}>
           Settings
         </Text>
       </View>
 
+      {/* Preferences Section */}
       <View
         style={[
-          styles.section,
+          styles.sectionCard,
           { backgroundColor: colors.surface, shadowColor: colors.shadow },
         ]}
       >
         <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
           Preferences
         </Text>
-
-        <View
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
-        >
-          <View style={styles.settingInfo}>
+        <View style={styles.settingItemRow}>
+          <View style={styles.settingIconWrap}>
             <Ionicons
               name="notifications"
-              size={24}
+              size={22}
               color={colors.secondaryText}
             />
-            <View style={styles.settingText}>
-              <Text
-                style={[styles.settingLabel, { color: colors.primaryText }]}
-              >
-                Notifications
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Daily reminders for habits
-              </Text>
-            </View>
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
+              Notifications
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Daily reminders for habits
+            </Text>
           </View>
           <Switch
             value={notificationsEnabled}
@@ -140,27 +141,22 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             }
           />
         </View>
-
-        <View
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
-        >
-          <View style={styles.settingInfo}>
-            <Ionicons name="moon" size={24} color={colors.secondaryText} />
-            <View style={styles.settingText}>
-              <Text
-                style={[styles.settingLabel, { color: colors.primaryText }]}
-              >
-                Dark Mode
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Switch to dark theme
-              </Text>
-            </View>
+        <View style={styles.settingItemRow}>
+          <View style={styles.settingIconWrap}>
+            <Ionicons name="moon" size={22} color={colors.secondaryText} />
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
+              Dark Mode
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Switch to dark theme
+            </Text>
           </View>
           <Switch
             value={isDarkMode}
@@ -171,35 +167,32 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </View>
       </View>
 
+      {/* Data Management Section */}
       <View
         style={[
-          styles.section,
+          styles.sectionCard,
           { backgroundColor: colors.surface, shadowColor: colors.shadow },
         ]}
       >
         <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
           Data Management
         </Text>
-
-        <TouchableOpacity
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
-          onPress={onClearData}
-        >
-          <View style={styles.settingInfo}>
-            <Ionicons name="trash" size={24} color={colors.error} />
-            <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: colors.error }]}>
-                Clear All Data
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Delete all habits and progress
-              </Text>
-            </View>
+        <TouchableOpacity style={styles.settingItemRow} onPress={onClearData}>
+          <View style={styles.settingIconWrap}>
+            <Ionicons name="trash" size={22} color={colors.error} />
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.error }]}>
+              Clear All Data
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Delete all habits and progress
+            </Text>
           </View>
           <Ionicons
             name="chevron-forward"
@@ -207,26 +200,25 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             color={colors.secondaryText}
           />
         </TouchableOpacity>
-
         <TouchableOpacity
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+          style={styles.settingItemRow}
           onPress={handleExportData}
         >
-          <View style={styles.settingInfo}>
-            <Ionicons name="download" size={24} color={colors.success} />
-            <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: colors.success }]}>
-                Export Data
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Backup your habits to JSON file
-              </Text>
-            </View>
+          <View style={styles.settingIconWrap}>
+            <Ionicons name="download" size={22} color={colors.success} />
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.success }]}>
+              Export Data
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Backup your habits to JSON file
+            </Text>
           </View>
           <Ionicons
             name="chevron-forward"
@@ -234,26 +226,25 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             color={colors.secondaryText}
           />
         </TouchableOpacity>
-
         <TouchableOpacity
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
+          style={styles.settingItemRow}
           onPress={handleImportData}
         >
-          <View style={styles.settingInfo}>
-            <Ionicons name="cloud-upload" size={24} color={colors.warning} />
-            <View style={styles.settingText}>
-              <Text style={[styles.settingLabel, { color: colors.warning }]}>
-                Import Data
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Restore habits from backup file
-              </Text>
-            </View>
+          <View style={styles.settingIconWrap}>
+            <Ionicons name="cloud-upload" size={22} color={colors.warning} />
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.warning }]}>
+              Import Data
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Restore habits from backup file
+            </Text>
           </View>
           <Ionicons
             name="chevron-forward"
@@ -263,67 +254,58 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </TouchableOpacity>
       </View>
 
+      {/* About Section */}
       <View
         style={[
-          styles.section,
+          styles.sectionCard,
           { backgroundColor: colors.surface, shadowColor: colors.shadow },
         ]}
       >
         <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
           About
         </Text>
-
-        <View
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
-        >
-          <View style={styles.settingInfo}>
+        <View style={styles.settingItemRow}>
+          <View style={styles.settingIconWrap}>
             <Ionicons
               name="information-circle"
-              size={24}
+              size={22}
               color={colors.secondaryText}
             />
-            <View style={styles.settingText}>
-              <Text
-                style={[styles.settingLabel, { color: colors.primaryText }]}
-              >
-                Version
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                1.0.0
-              </Text>
-            </View>
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
+              Version
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              1.0.0
+            </Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={[styles.settingItem, { borderBottomColor: colors.divider }]}
-        >
-          <View style={styles.settingInfo}>
+        <TouchableOpacity style={styles.settingItemRow}>
+          <View style={styles.settingIconWrap}>
             <Ionicons
               name="help-circle"
-              size={24}
+              size={22}
               color={colors.secondaryText}
             />
-            <View style={styles.settingText}>
-              <Text
-                style={[styles.settingLabel, { color: colors.primaryText }]}
-              >
-                Help & Support
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.secondaryText },
-                ]}
-              >
-                Get help with the app
-              </Text>
-            </View>
+          </View>
+          <View style={styles.settingTextWrap}>
+            <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
+              Help & Support
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: colors.secondaryText },
+              ]}
+            >
+              Get help with the app
+            </Text>
           </View>
           <Ionicons
             name="chevron-forward"
@@ -341,54 +323,68 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 36,
+    paddingBottom: 18,
     borderBottomWidth: 1,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 6,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: 1.2,
   },
-  section: {
-    margin: 16,
-    borderRadius: 12,
-    padding: 16,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+  sectionCard: {
+    marginHorizontal: 18,
+    marginTop: 18,
+    marginBottom: 0,
+    borderRadius: 18,
+    padding: 18,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
+    fontWeight: "700",
+    marginBottom: 14,
+    marginLeft: 2,
   },
-  settingItem: {
+  settingItemRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     paddingVertical: 16,
     borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
   },
-  settingInfo: {
-    flexDirection: "row",
+  settingIconWrap: {
+    width: 36,
     alignItems: "center",
-    flex: 1,
+    justifyContent: "center",
+    marginRight: 10,
   },
-  settingText: {
-    marginLeft: 12,
+  settingTextWrap: {
     flex: 1,
+    justifyContent: "center",
   },
   settingLabel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     marginBottom: 2,
   },
   settingDescription: {
     fontSize: 14,
+    opacity: 0.85,
   },
 });
 

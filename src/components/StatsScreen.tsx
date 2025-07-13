@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Habit } from "../types";
 import { useTheme } from "../context/ThemeContext";
 
@@ -9,12 +10,10 @@ interface StatsScreenProps {
 
 const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
   const { colors } = useTheme();
-
   const totalHabits = habits.length;
+  const today = new Date().toISOString().slice(0, 10);
   const completedToday = habits.filter((habit) =>
-    habit.completedDates.includes(
-      habit.completedDates[habit.completedDates.length - 1] || ""
-    )
+    habit.completedDates.includes(today)
   ).length;
   const totalStreak = habits.reduce(
     (total, habit) => total + habit.currentStreak,
@@ -36,6 +35,12 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
           { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ]}
       >
+        <Ionicons
+          name="stats-chart"
+          size={28}
+          color={colors.accentText}
+          style={{ marginRight: 10 }}
+        />
         <Text style={[styles.title, { color: colors.primaryText }]}>
           Statistics
         </Text>
@@ -48,20 +53,31 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
             { backgroundColor: colors.card, shadowColor: colors.shadow },
           ]}
         >
-          <Text style={[styles.statNumber, { color: colors.success }]}>
+          <Ionicons
+            name="list"
+            size={24}
+            color={colors.info}
+            style={styles.statIcon}
+          />
+          <Text style={[styles.statNumber, { color: colors.info }]}>
             {totalHabits}
           </Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
             Total Habits
           </Text>
         </View>
-
         <View
           style={[
             styles.statCard,
             { backgroundColor: colors.card, shadowColor: colors.shadow },
           ]}
         >
+          <Ionicons
+            name="checkmark-circle"
+            size={24}
+            color={colors.success}
+            style={styles.statIcon}
+          />
           <Text style={[styles.statNumber, { color: colors.success }]}>
             {completedToday}
           </Text>
@@ -69,28 +85,38 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
             Completed Today
           </Text>
         </View>
-
         <View
           style={[
             styles.statCard,
             { backgroundColor: colors.card, shadowColor: colors.shadow },
           ]}
         >
-          <Text style={[styles.statNumber, { color: colors.success }]}>
+          <Ionicons
+            name="flame"
+            size={24}
+            color={colors.warning}
+            style={styles.statIcon}
+          />
+          <Text style={[styles.statNumber, { color: colors.warning }]}>
             {totalStreak}
           </Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
             Total Streak
           </Text>
         </View>
-
         <View
           style={[
             styles.statCard,
             { backgroundColor: colors.card, shadowColor: colors.shadow },
           ]}
         >
-          <Text style={[styles.statNumber, { color: colors.success }]}>
+          <Ionicons
+            name="trophy"
+            size={24}
+            color={colors.accentText}
+            style={styles.statIcon}
+          />
+          <Text style={[styles.statNumber, { color: colors.accentText }]}>
             {longestStreak}
           </Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
@@ -102,34 +128,59 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ habits }) => {
       <View
         style={[
           styles.section,
-          { backgroundColor: colors.card, shadowColor: colors.shadow },
+          { backgroundColor: colors.surface, shadowColor: colors.shadow },
         ]}
       >
         <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
           Habit Overview
         </Text>
-        {habits.map((habit) => (
-          <View
-            key={habit.id}
-            style={[styles.habitStat, { borderBottomColor: colors.divider }]}
-          >
-            <Text style={[styles.habitName, { color: colors.primaryText }]}>
-              {habit.name}
-            </Text>
-            <View style={styles.habitStats}>
+        {habits.length === 0 ? (
+          <Text style={[styles.emptyText, { color: colors.secondaryText }]}>
+            No habits yet.
+          </Text>
+        ) : (
+          habits.map((habit) => (
+            <View
+              key={habit.id}
+              style={[styles.habitRow, { borderBottomColor: colors.divider }]}
+            >
               <Text
-                style={[styles.habitStatText, { color: colors.secondaryText }]}
+                style={[styles.habitName, { color: colors.primaryText }]}
+                numberOfLines={1}
               >
-                Current: {habit.currentStreak} days
+                {habit.name}
               </Text>
-              <Text
-                style={[styles.habitStatText, { color: colors.secondaryText }]}
+              <View
+                style={[
+                  styles.streakPill,
+                  { backgroundColor: colors.background },
+                ]}
               >
-                Longest: {habit.longestStreak} days
-              </Text>
+                <Ionicons name="flame" size={14} color={colors.success} />
+                <Text
+                  style={[styles.streakPillText, { color: colors.success }]}
+                >
+                  {" "}
+                  {habit.currentStreak}d
+                </Text>
+              </View>
+              <View
+                style={[
+                  styles.streakPill,
+                  { backgroundColor: colors.surface, marginLeft: 8 },
+                ]}
+              >
+                <Ionicons name="trophy" size={14} color={colors.accentText} />
+                <Text
+                  style={[styles.streakPillText, { color: colors.accentText }]}
+                >
+                  {" "}
+                  {habit.longestStreak}d
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          ))
+        )}
       </View>
     </ScrollView>
   );
@@ -140,75 +191,101 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 36,
+    paddingBottom: 18,
     borderBottomWidth: 1,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 6,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: 1.2,
   },
   statsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 16,
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 16,
     gap: 12,
   },
   statCard: {
-    borderRadius: 12,
-    padding: 16,
+    width: "47%",
+    borderRadius: 18,
+    paddingVertical: 22,
     alignItems: "center",
-    flex: 1,
-    minWidth: "45%",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    marginBottom: 12,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
+    shadowRadius: 12,
     elevation: 5,
   },
+  statIcon: {
+    marginBottom: 6,
+  },
   statNumber: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   statLabel: {
     fontSize: 14,
     textAlign: "center",
+    fontWeight: "500",
   },
   section: {
-    margin: 16,
-    borderRadius: 12,
-    padding: 16,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    margin: 18,
+    borderRadius: 18,
+    padding: 18,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
+    fontWeight: "700",
+    marginBottom: 14,
   },
-  habitStat: {
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 18,
+  },
+  habitRow: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
   habitName: {
+    flex: 1,
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 4,
+    marginRight: 8,
   },
-  habitStats: {
+  streakPill: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    marginLeft: 2,
   },
-  habitStatText: {
+  streakPillText: {
     fontSize: 14,
+    fontWeight: "700",
   },
 });
 

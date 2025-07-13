@@ -27,6 +27,9 @@ import {
   saveHabits,
 } from "./utils/storage";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import CustomSplashScreen from "./components/CustomSplashScreen";
+import ModernHeader from "./components/ModernHeader";
+import FloatingActionButton from "./components/FloatingActionButton";
 
 const HabitStreakAppContent: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -34,6 +37,13 @@ const HabitStreakAppContent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("habits");
   const { colors, statusBarStyle, statusBarBackgroundColor } = useTheme();
+  const [splashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    // Show custom splash for 1.5s
+    const timer = setTimeout(() => setSplashVisible(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     loadHabitsFromStorage();
@@ -145,6 +155,10 @@ const HabitStreakAppContent: React.FC = () => {
       .length;
   };
 
+  if (splashVisible) {
+    return <CustomSplashScreen />;
+  }
+
   if (loading) {
     return (
       <SafeAreaView
@@ -168,35 +182,12 @@ const HabitStreakAppContent: React.FC = () => {
       case "habits":
         return (
           <>
-            <View
-              style={[
-                styles.header,
-                {
-                  backgroundColor: colors.surface,
-                  borderBottomColor: colors.border,
-                },
-              ]}
-            >
-              <View>
-                <Text style={[styles.title, { color: colors.primaryText }]}>
-                  Habit Streak
-                </Text>
-                <Text
-                  style={[styles.subtitle, { color: colors.secondaryText }]}
-                >
-                  {getCompletedToday()} of {habits.length} habits completed
-                  today
-                </Text>
-              </View>
-              <View style={styles.statsContainer}>
-                <Text style={[styles.statsText, { color: colors.success }]}>
-                  🔥 {getTotalStreak()} total streak
-                </Text>
-              </View>
-            </View>
-
+            <ModernHeader
+              totalStreak={getTotalStreak()}
+              completedToday={getCompletedToday()}
+              totalHabits={habits.length}
+            />
             {/* <TestDateDisplay /> */}
-
             {habits.length === 0 ? (
               <EmptyState />
             ) : (
@@ -214,14 +205,7 @@ const HabitStreakAppContent: React.FC = () => {
                 showsVerticalScrollIndicator={false}
               />
             )}
-
-            <TouchableOpacity
-              style={[styles.fab, { backgroundColor: colors.primary }]}
-              onPress={() => setModalVisible(true)}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="add" size={24} color="white" />
-            </TouchableOpacity>
+            <FloatingActionButton onPress={() => setModalVisible(true)} />
           </>
         );
       case "stats":

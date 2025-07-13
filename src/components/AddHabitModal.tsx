@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,15 @@ import {
   StyleSheet,
   Modal,
   Alert,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { HabitFormData } from "../types";
 import { useTheme } from "../context/ThemeContext";
+
+const MASCOT = require("../../assets/splash.png"); // Use your mascot or icon
 
 interface AddHabitModalProps {
   visible: boolean;
@@ -25,15 +30,34 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
 }) => {
   const { colors } = useTheme();
   const [habitName, setHabitName] = useState("");
+  const slideAnim = useRef(new Animated.Value(80)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (visible) {
+      slideAnim.setValue(80);
+      fadeAnim.setValue(0);
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible]);
 
   const handleAddHabit = () => {
     const trimmedName = habitName.trim();
-
     if (!trimmedName) {
       Alert.alert("Error", "Please enter a habit name");
       return;
     }
-
     onAddHabit({ name: trimmedName });
     setHabitName("");
     onClose();
@@ -47,29 +71,40 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="none"
       transparent={true}
       onRequestClose={handleCancel}
     >
-      <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
-        <View
-          style={[
-            styles.modal,
-            { backgroundColor: colors.surface, shadowColor: colors.shadow },
-          ]}
-        >
-          <View style={styles.header}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
+          <Animated.View
+            style={[
+              styles.modal,
+              {
+                backgroundColor: colors.surface,
+                shadowColor: colors.shadow,
+                transform: [{ translateY: slideAnim }],
+                opacity: fadeAnim,
+              },
+            ]}
+          >
+            <View style={styles.mascotWrap}>
+              <Ionicons
+                name="sparkles"
+                size={32}
+                color={colors.accentText}
+                style={{ marginBottom: 2 }}
+              />
+              {/* <Image source={MASCOT} style={styles.mascot} resizeMode="contain" /> */}
+            </View>
             <Text style={[styles.title, { color: colors.primaryText }]}>
               Add New Habit
             </Text>
-            <TouchableOpacity onPress={handleCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.secondaryText} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.content}>
-            <Text style={[styles.label, { color: colors.primaryText }]}>
-              Habit Name
+            <Text style={[styles.label, { color: colors.secondaryText }]}>
+              What habit do you want to build?
             </Text>
             <TextInput
               style={[
@@ -88,8 +123,7 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
               returnKeyType="done"
               onSubmitEditing={handleAddHabit}
             />
-
-            <View style={styles.buttonContainer}>
+            <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={[
                   styles.button,
@@ -100,6 +134,7 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
                   },
                 ]}
                 onPress={handleCancel}
+                activeOpacity={0.8}
               >
                 <Text
                   style={[
@@ -110,7 +145,6 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
                   Cancel
                 </Text>
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={[
                   styles.button,
@@ -118,13 +152,14 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
                   { backgroundColor: colors.primary },
                 ]}
                 onPress={handleAddHabit}
+                activeOpacity={0.8}
               >
                 <Text style={styles.addButtonText}>Add Habit</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -134,73 +169,79 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 16,
   },
   modal: {
-    borderRadius: 16,
-    padding: 20,
-    width: "85%",
+    borderRadius: 28,
+    padding: 28,
+    width: "100%",
     maxWidth: 400,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 12,
     alignItems: "center",
-    marginBottom: 20,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  closeButton: {
-    padding: 4,
-  },
-  content: {
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "500",
+  mascotWrap: {
+    alignItems: "center",
     marginBottom: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 24,
+  mascot: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    marginBottom: 2,
   },
-  buttonContainer: {
+  title: {
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 6,
+    letterSpacing: 0.5,
+    textAlign: "center",
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: "500",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  input: {
+    borderWidth: 1.5,
+    borderRadius: 12,
+    padding: 14,
+    fontSize: 17,
+    marginBottom: 24,
+    width: "100%",
+  },
+  buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
     gap: 12,
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: "center",
+    borderWidth: 1.5,
   },
   cancelButton: {
-    borderWidth: 1,
+    backgroundColor: "#F5F5F5",
   },
   cancelButtonText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "600",
   },
   addButton: {
     // Background color applied dynamically
+    borderWidth: 0,
   },
   addButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });
 

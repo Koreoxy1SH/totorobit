@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Habit Streak",
+    "name": "Totorobit",
     "slug": "habit-streak",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.totorobit.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
