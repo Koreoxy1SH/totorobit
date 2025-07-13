@@ -1,6 +1,17 @@
 # Habit Streak App
 
-A simple and intuitive habit tracking app built with React Native and Expo. Track your daily habits and maintain streaks to build lasting positive behaviors.
+
+<table border="0">
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/bb64f38e-d6c4-4dcc-9627-8b02142189bf" alt="Habit Streak App" width="300" height="300" />
+    </td>
+    <td>
+      <h3><strong>A simple and intuitive habit tracking app built with React Native and Expo. Track your daily habits and maintain streaks to build lasting positive behaviors.</strong></h3>
+    </td>
+  </tr>
+</table>
+
 
 ## Features
 
@@ -153,7 +164,5 @@ This project is open source and available under the MIT License.
 - Habit categories and tags
 - Reminder notifications
 - Statistics and analytics
-- Habit sharing with friends
 - Dark mode support
 - Export/import data
-- Habit templates
