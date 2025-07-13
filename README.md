@@ -7,7 +7,12 @@
       <img src="https://github.com/user-attachments/assets/bb64f38e-d6c4-4dcc-9627-8b02142189bf" alt="Habit Streak App" width="300" height="300" />
     </td>
     <td>
+     <img width="270" height="268" alt="Screenshot from 2025-07-13 19-29-33" src="https://github.com/user-attachments/assets/eeffa2ae-8880-41ab-9f5c-b02072149729" />
+    </td>
+    <td>
       <h3><strong>A simple and intuitive habit tracking app built with React Native and Expo. Track your daily habits and maintain streaks to build lasting positive behaviors.</strong></h3>
+      <h6>Scan to try the app</h6>
+      <h6>!Currently only supports Android operating system<h6>
     </td>
   </tr>
 </table>
