@@ -154,6 +154,14 @@ const HabitStreakAppContent: React.FC = () => {
     setSelectedHabit(null);
   };
 
+  const handleUpdateHabit = async (updatedHabit: Habit) => {
+    await updateHabit(updatedHabit);
+    setHabits((prev) =>
+      prev.map((h) => (h.id === updatedHabit.id ? updatedHabit : h))
+    );
+    setSelectedHabit(null);
+  };
+
   const getTotalStreak = (): number => {
     return habits.reduce((total, habit) => total + habit.currentStreak, 0);
   };
@@ -220,6 +228,7 @@ const HabitStreakAppContent: React.FC = () => {
               <HabitDetailsScreen
                 habit={selectedHabit}
                 onClose={handleCloseDetails}
+                onUpdateHabit={handleUpdateHabit}
               />
             )}
           </>

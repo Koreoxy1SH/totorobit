@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
+  TextInput,
+  Modal as RNModal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { Habit } from "../types";
@@ -43,10 +45,13 @@ function getLast12Months() {
 const HabitDetailsScreen: React.FC<{
   habit: Habit;
   onClose: () => void;
-}> = ({ habit, onClose }) => {
+  onUpdateHabit: (updatedHabit: Habit) => void;
+}> = ({ habit, onClose, onUpdateHabit }) => {
   const { colors } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editName, setEditName] = useState(habit.name);
 
   useEffect(() => {
     Animated.parallel([
@@ -150,212 +155,387 @@ const HabitDetailsScreen: React.FC<{
   const completionRate = Math.round((completedDays / totalDays) * 100);
 
   return (
-    <Modal visible animationType="none" transparent onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <Animated.View
-          style={[
-            styles.modal,
-            {
-              backgroundColor: colors.background,
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
+    <>
+      <RNModal
+        visible={editModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.25)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={24} color={colors.secondaryText} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Title */}
-          <Text style={[styles.title, { color: colors.primaryText }]}>
-            {habit.name}
-          </Text>
-          {/* Subtitle: creation date */}
-          <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-            Started: {formatCreatedAt(habit.createdAt)}
-          </Text>
-
-          {/* Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Ionicons name="flame" size={18} color={colors.success} />
-              <Text style={[styles.statValue, { color: colors.success }]}>
-                {habit.currentStreak}
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                streak
-              </Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Ionicons name="trophy" size={18} color={colors.accentText} />
-              <Text style={[styles.statValue, { color: colors.accentText }]}>
-                {habit.longestStreak}
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                best
-              </Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Ionicons
-                name="checkmark-circle"
-                size={18}
-                color={colors.primaryText}
-              />
-              <Text style={[styles.statValue, { color: colors.primaryText }]}>
-                {completionRate}%
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                rate
-              </Text>
-            </View>
-          </View>
-
-          {/* Current Month Calendar */}
-          <View style={styles.currentMonthSection}>
-            <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
-              {currentMonthLabel}
-            </Text>
-            <View
-              style={[
-                styles.currentMonthCalendar,
-                {
-                  backgroundColor:
-                    colors.background === "#121212" ? "#23272f" : "#f8f9fa",
-                },
-              ]}
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              borderRadius: 18,
+              padding: 24,
+              width: "85%",
+              maxWidth: 340,
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.18,
+              shadowRadius: 16,
+              elevation: 12,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                color: colors.primaryText,
+                marginBottom: 12,
+              }}
             >
-              {/* Day names */}
-              <View style={styles.currentMonthDayNamesRow}>
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-                  <Text
-                    key={d}
-                    style={[
-                      styles.currentMonthDayName,
-                      { color: colors.secondaryText },
-                    ]}
-                  >
-                    {d}
-                  </Text>
-                ))}
+              Edit Habit Name
+            </Text>
+            <TextInput
+              value={editName}
+              onChangeText={setEditName}
+              style={{
+                fontSize: 17,
+                fontWeight: "600",
+                color: colors.primaryText,
+                backgroundColor: colors.background,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: colors.border,
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                width: "100%",
+                marginBottom: 18,
+              }}
+              autoFocus
+              placeholder="Habit name"
+              placeholderTextColor={colors.secondaryText}
+              maxLength={40}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+                gap: 10,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setEditModalVisible(false)}
+                style={{
+                  flex: 1,
+                  borderColor: colors.border,
+                  borderWidth: 1.5,
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                  backgroundColor: colors.background,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: colors.secondaryText,
+                    fontWeight: "700",
+                    fontSize: 15,
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  if (editName.trim() && editName !== habit.name) {
+                    onUpdateHabit({ ...habit, name: editName.trim() });
+                  }
+                  setEditModalVisible(false);
+                }}
+                style={{
+                  flex: 1,
+                  backgroundColor: colors.primary,
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                  alignItems: "center",
+                  shadowColor: colors.shadow,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </RNModal>
+      <Modal visible animationType="none" transparent onRequestClose={onClose}>
+        <View style={styles.overlay}>
+          <Animated.View
+            style={[
+              styles.modal,
+              {
+                backgroundColor: colors.background,
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
+            ]}
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <Ionicons name="close" size={24} color={colors.secondaryText} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Title and Edit Button */}
+            <View style={{ alignItems: "center", marginBottom: 4 }}>
+              <Text
+                style={[styles.title, { color: colors.primaryText }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {habit.name}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setEditName(habit.name);
+                  setEditModalVisible(true);
+                }}
+                style={{
+                  backgroundColor:
+                    colors.background === "#121212"
+                      ? colors.surface
+                      : "#f5f5f5",
+                  borderRadius: 8,
+                  paddingHorizontal: 14,
+                  paddingVertical: 6,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  shadowColor: colors.shadow,
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.04,
+                  shadowRadius: 2,
+                  elevation: 1,
+                  alignSelf: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: colors.primary,
+                    fontWeight: "700",
+                    fontSize: 15,
+                  }}
+                >
+                  Edit
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {/* Subtitle: creation date */}
+            <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
+              Started: {formatCreatedAt(habit.createdAt)}
+            </Text>
+
+            {/* Stats */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Ionicons name="flame" size={18} color={colors.success} />
+                <Text style={[styles.statValue, { color: colors.success }]}>
+                  {habit.currentStreak}
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.secondaryText }]}
+                >
+                  streak
+                </Text>
               </View>
-              {/* Calendar weeks */}
-              {currentMonthWeeks.map((week, i) => (
-                <View key={i} style={styles.currentMonthWeekRow}>
-                  {week.map((day, j) => (
-                    <View key={j} style={styles.currentMonthDayCell}>
-                      {day ? (
-                        <View
-                          style={[
-                            styles.currentMonthDaySquare,
-                            {
-                              backgroundColor: isCompleted(day.date)
-                                ? colors.success
-                                : colors.border,
-                            },
-                          ]}
-                        >
-                          <Text
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Ionicons name="trophy" size={18} color={colors.accentText} />
+                <Text style={[styles.statValue, { color: colors.accentText }]}>
+                  {habit.longestStreak}
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.secondaryText }]}
+                >
+                  best
+                </Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={18}
+                  color={colors.primaryText}
+                />
+                <Text style={[styles.statValue, { color: colors.primaryText }]}>
+                  {completionRate}%
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.secondaryText }]}
+                >
+                  rate
+                </Text>
+              </View>
+            </View>
+
+            {/* Current Month Calendar */}
+            <View style={styles.currentMonthSection}>
+              <Text
+                style={[styles.sectionTitle, { color: colors.primaryText }]}
+              >
+                {currentMonthLabel}
+              </Text>
+              <View
+                style={[
+                  styles.currentMonthCalendar,
+                  {
+                    backgroundColor:
+                      colors.background === "#121212" ? "#23272f" : "#f8f9fa",
+                  },
+                ]}
+              >
+                {/* Day names */}
+                <View style={styles.currentMonthDayNamesRow}>
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                    (d) => (
+                      <Text
+                        key={d}
+                        style={[
+                          styles.currentMonthDayName,
+                          { color: colors.secondaryText },
+                        ]}
+                      >
+                        {d}
+                      </Text>
+                    )
+                  )}
+                </View>
+                {/* Calendar weeks */}
+                {currentMonthWeeks.map((week, i) => (
+                  <View key={i} style={styles.currentMonthWeekRow}>
+                    {week.map((day, j) => (
+                      <View key={j} style={styles.currentMonthDayCell}>
+                        {day ? (
+                          <View
                             style={[
-                              styles.currentMonthDayText,
+                              styles.currentMonthDaySquare,
                               {
-                                color: isCompleted(day.date)
-                                  ? "#fff"
-                                  : colors.secondaryText,
+                                backgroundColor: isCompleted(day.date)
+                                  ? colors.success
+                                  : colors.border,
                               },
                             ]}
                           >
-                            {day.day}
-                          </Text>
-                        </View>
-                      ) : (
-                        <View style={styles.currentMonthDaySquare} />
-                      )}
-                    </View>
-                  ))}
-                </View>
-              ))}
-            </View>
-          </View>
-
-          {/* Previous 11 Months GitHub-style */}
-          <View style={styles.yearSection}>
-            <Text style={[styles.sectionTitle, { color: colors.primaryText }]}>
-              Year Overview
-            </Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.yearScrollContainer}
-            >
-              {prevMonthGrids.map((month, idx) => (
-                <View key={month.label} style={styles.yearMonthBlock}>
-                  <Text
-                    style={[
-                      styles.yearMonthLabel,
-                      month.hasStreak
-                        ? [
-                            styles.yearMonthLabelHighlight,
-                            {
-                              backgroundColor: colors.success,
-                              color: "#fff",
-                              // For dark mode, use a lighter background and dark text
-                              ...(colors.background === "#121212" && {
-                                backgroundColor: colors.accentText,
-                                color: colors.background,
-                              }),
-                            },
-                          ]
-                        : { color: colors.secondaryText },
-                    ]}
-                  >
-                    {month.label}
-                  </Text>
-                  <View
-                    style={[
-                      styles.yearMonthCalendar,
-                      {
-                        backgroundColor:
-                          colors.background === "#121212"
-                            ? "#23272f"
-                            : "#f8f9fa",
-                      },
-                    ]}
-                  >
-                    {month.weeks.map((week, i) => (
-                      <View key={i} style={styles.yearMonthWeekRow}>
-                        {week.map((day, j) => (
-                          <View key={j} style={styles.yearMonthDayCell}>
-                            {day ? (
-                              <View
-                                style={[
-                                  styles.yearMonthDaySquare,
-                                  {
-                                    backgroundColor: isCompleted(day.date)
-                                      ? colors.success
-                                      : colors.border,
-                                  },
-                                ]}
-                              />
-                            ) : (
-                              <View style={styles.yearMonthDaySquare} />
-                            )}
+                            <Text
+                              style={[
+                                styles.currentMonthDayText,
+                                {
+                                  color: isCompleted(day.date)
+                                    ? "#fff"
+                                    : colors.secondaryText,
+                                },
+                              ]}
+                            >
+                              {day.day}
+                            </Text>
                           </View>
-                        ))}
+                        ) : (
+                          <View style={styles.currentMonthDaySquare} />
+                        )}
                       </View>
                     ))}
                   </View>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
+                ))}
+              </View>
+            </View>
+
+            {/* Previous 11 Months GitHub-style */}
+            <View style={styles.yearSection}>
+              <Text
+                style={[styles.sectionTitle, { color: colors.primaryText }]}
+              >
+                Year Overview
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.yearScrollContainer}
+              >
+                {prevMonthGrids.map((month, idx) => (
+                  <View key={month.label} style={styles.yearMonthBlock}>
+                    <Text
+                      style={[
+                        styles.yearMonthLabel,
+                        month.hasStreak
+                          ? [
+                              styles.yearMonthLabelHighlight,
+                              {
+                                backgroundColor: colors.success,
+                                color: "#fff",
+                                // For dark mode, use a lighter background and dark text
+                                ...(colors.background === "#121212" && {
+                                  backgroundColor: colors.accentText,
+                                  color: colors.background,
+                                }),
+                              },
+                            ]
+                          : { color: colors.secondaryText },
+                      ]}
+                    >
+                      {month.label}
+                    </Text>
+                    <View
+                      style={[
+                        styles.yearMonthCalendar,
+                        {
+                          backgroundColor:
+                            colors.background === "#121212"
+                              ? "#23272f"
+                              : "#f8f9fa",
+                        },
+                      ]}
+                    >
+                      {month.weeks.map((week, i) => (
+                        <View key={i} style={styles.yearMonthWeekRow}>
+                          {week.map((day, j) => (
+                            <View key={j} style={styles.yearMonthDayCell}>
+                              {day ? (
+                                <View
+                                  style={[
+                                    styles.yearMonthDaySquare,
+                                    {
+                                      backgroundColor: isCompleted(day.date)
+                                        ? colors.success
+                                        : colors.border,
+                                    },
+                                  ]}
+                                />
+                              ) : (
+                                <View style={styles.yearMonthDaySquare} />
+                              )}
+                            </View>
+                          ))}
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -367,11 +547,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modal: {
-    borderRadius: 20,
     padding: 0,
-    width: "95%",
+    width: "100%",
     maxWidth: 600,
-    maxHeight: "90%",
+    flex: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
@@ -393,8 +572,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     textAlign: "center",
-    marginBottom: 20,
-    paddingHorizontal: 24,
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 13,
