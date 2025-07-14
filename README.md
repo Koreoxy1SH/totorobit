@@ -29,8 +29,10 @@
 
 ## Screenshots
 
-The app features a clean, modern interface with:
+<img width="500" height="1536" alt="mockup" src="https://github.com/user-attachments/assets/e00ed838-8c55-48bd-a21f-7457bf99b115" />
 
+
+The app features a clean, modern interface with:
 - Header showing daily progress and total streak
 - Individual habit cards with streak counters
 - Floating action button to add new habits
