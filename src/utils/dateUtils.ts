@@ -1,5 +1,9 @@
 export const formatDate = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  // Get local date in YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 export const getToday = (): string => {
@@ -11,8 +15,8 @@ export const getToday = (): string => {
   // return "2025-07-13"; // Day 1
   // return "2025-07-14"; // Day 2
   // return "2025-07-15"; // Day 3
-  // return '2024-01-05'; // Day 5 (skip day 4 to test streak break)
-  // return '2024-01-10'; // Day 10
+  // return "2025-07-16"; // Day 5 (skip day 4 to test streak break)
+  // return '2025-07-17'; // Day 10
 };
 
 export const isToday = (dateString: string): boolean => {

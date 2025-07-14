@@ -17,6 +17,7 @@ interface HabitCardProps {
   habit: Habit;
   onToggleComplete: (habit: Habit) => void;
   onDelete: (habitId: string) => void;
+  onPress?: (habit: Habit) => void; // Add this prop
 }
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -26,6 +27,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
   habit,
   onToggleComplete,
   onDelete,
+  onPress,
 }) => {
   const { colors } = useTheme();
   const isCompletedToday = habit.completedDates.includes(getToday());
@@ -159,35 +161,41 @@ const HabitCard: React.FC<HabitCardProps> = ({
             )}
           </Animated.View>
         </TouchableOpacity>
-        <Animated.View
-          style={[
-            styles.infoWrap,
-            {
-              transform: [{ translateX }],
-            },
-          ]}
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => onPress && onPress(habit)}
+          activeOpacity={0.7}
         >
-          <Text
+          <Animated.View
             style={[
-              styles.habitName,
-              { color: colors.primaryText },
-              isCompletedToday && {
-                textDecorationLine: "line-through",
-                color: colors.success,
+              styles.infoWrap,
+              {
+                transform: [{ translateX }],
               },
             ]}
-            numberOfLines={1}
           >
-            {habit.name}
-          </Text>
-          <View style={styles.streakBadge}>
-            <Ionicons name="flame" size={16} color={colors.success} />
-            <Text style={[styles.streakText, { color: colors.success }]}>
-              {" "}
-              {habit.currentStreak}d
+            <Text
+              style={[
+                styles.habitName,
+                { color: colors.primaryText },
+                isCompletedToday && {
+                  textDecorationLine: "line-through",
+                  color: colors.success,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {habit.name}
             </Text>
-          </View>
-        </Animated.View>
+            <View style={styles.streakBadge}>
+              <Ionicons name="flame" size={16} color={colors.success} />
+              <Text style={[styles.streakText, { color: colors.success }]}>
+                {" "}
+                {habit.currentStreak}d
+              </Text>
+            </View>
+          </Animated.View>
+        </TouchableOpacity>
         {/* Delete button removed, replaced by swipe */}
       </Animated.View>
     </View>

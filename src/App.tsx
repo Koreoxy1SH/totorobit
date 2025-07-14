@@ -30,6 +30,7 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import ModernHeader from "./components/ModernHeader";
 import FloatingActionButton from "./components/FloatingActionButton";
+import HabitDetailsScreen from "./components/HabitDetailsScreen";
 
 const HabitStreakAppContent: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -38,6 +39,7 @@ const HabitStreakAppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState("habits");
   const { colors, statusBarStyle, statusBarBackgroundColor } = useTheme();
   const [splashVisible, setSplashVisible] = useState(true);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
 
   useEffect(() => {
     // Show custom splash for 1.5s
@@ -145,6 +147,13 @@ const HabitStreakAppContent: React.FC = () => {
     );
   };
 
+  const handleHabitPress = (habit: Habit) => {
+    setSelectedHabit(habit);
+  };
+  const handleCloseDetails = () => {
+    setSelectedHabit(null);
+  };
+
   const getTotalStreak = (): number => {
     return habits.reduce((total, habit) => total + habit.currentStreak, 0);
   };
@@ -199,6 +208,7 @@ const HabitStreakAppContent: React.FC = () => {
                     habit={item}
                     onToggleComplete={handleToggleComplete}
                     onDelete={handleDeleteHabit}
+                    onPress={handleHabitPress}
                   />
                 )}
                 contentContainerStyle={styles.listContainer}
@@ -206,6 +216,12 @@ const HabitStreakAppContent: React.FC = () => {
               />
             )}
             <FloatingActionButton onPress={() => setModalVisible(true)} />
+            {selectedHabit && (
+              <HabitDetailsScreen
+                habit={selectedHabit}
+                onClose={handleCloseDetails}
+              />
+            )}
           </>
         );
       case "stats":

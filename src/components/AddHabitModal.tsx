@@ -15,8 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { HabitFormData } from "../types";
 import { useTheme } from "../context/ThemeContext";
 
-const MASCOT = require("../../assets/splash.png"); // Use your mascot or icon
-
 interface AddHabitModalProps {
   visible: boolean;
   onClose: () => void;
